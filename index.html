@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Raja Biswas | Full Stack Web Developer</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/locomotive-scroll@3.5.4/dist/locomotive-scroll.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow-x: hidden;
+            background: #f1f1f1;
+        }
+        #main {
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ===== PAGES ===== */
+        #page {
+            position: relative;
+            height: 100vh;
+            width: 100vw;
+            background-color: #0a0a0f;
+            overflow: hidden;
+        }
+        #page1, #page2, #page3 {
+            position: relative;
+            height: 100vh;
+            width: 100vw;
+            background-color: #f1f1f1;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        /* ===== CANVAS ===== */
+        canvas {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: 999 !important;
+            pointer-events: none !important;
+            object-fit: cover;
+            transition: opacity 0.3s ease;
+        }
+
+        #page1 > *, #page2 > *, #page3 > * {
+            position: relative;
+            z-index: 20;
+        }
+
+        /* ===== CONTACT ===== */
+        #contact {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f1f1f1;
+            padding: 40px 20px;
+            overflow: hidden;
+        }
+
+        #contact-canvas {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: 1 !important;
+            opacity: 0.35 !important;
+            filter: blur(1.5px) !important;
+            -webkit-filter: blur(1.5px) !important;
+            pointer-events: none !important;
+            object-fit: cover;
+        }
+
+        .contact-box {
+            position: relative;
+            z-index: 10 !important;
+            width: 90%;
+            max-width: 650px;
+            padding: 45px 55px;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+        }
+        .contact-box h1 {
+            font-size: 3.2rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 25px;
+            line-height: 1.1;
+        }
+        .contact-box h1 span {
+            background: linear-gradient(135deg, #6C63FF, #3f3d9e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .contact-box form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .contact-box input, .contact-box textarea {
+            padding: 16px 20px;
+            border: none;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            font-size: 15px;
+            color: #1a1a2e;
+            outline: none;
+            transition: 0.3s;
+            font-family: inherit;
+            width: 100%;
+        }
+        .contact-box input:focus, .contact-box textarea:focus {
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.15);
+        }
+        .contact-box textarea {
+            height: 130px;
+            resize: vertical;
+        }
+        .contact-box button {
+            padding: 16px 30px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #6C63FF, #5a52d5);
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: fit-content;
+            box-shadow: 0 8px 24px rgba(108, 99, 255, 0.2);
+        }
+        .contact-box button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(108, 99, 255, 0.3);
+        }
+        .contact-box button i {
+            transition: 0.3s;
+        }
+        .contact-box button:hover i {
+            transform: translateX(5px);
+        }
+        .contact-box button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        /* ===== SUCCESS/ERROR MESSAGE ===== */
+        .form-message {
+            margin-top: 15px;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            display: none;
+            text-align: center;
+        }
+        .form-message.success {
+            display: block;
+            background: rgba(76, 175, 80, 0.15);
+            color: #2e7d32;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+        .form-message.error {
+            display: block;
+            background: rgba(244, 67, 54, 0.15);
+            color: #c62828;
+            border: 1px solid rgba(244, 67, 54, 0.3);
+        }
+
+        /* ===== LOOP TEXT ===== */
+        #loop {
+            display: flex;
+            position: absolute;
+            top: 30%;
+            left: 0;
+            width: max-content;
+            z-index: 2;
+            animation: slideLoop 20s linear infinite;
+        }
+        @keyframes slideLoop {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-33.33%); }
+        }
+        #loop h1 {
+            font-size: 100px;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.7);
+            white-space: nowrap;
+            margin-right: 40px;
+        }
+        #loop h1 b { color: #ff6b6b; font-weight: 700; }
+        #loop h1 span { color: #4ecdc4; }
+
+        /* ===== NAV ===== */
+        #nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 40px;
+            position: fixed;
+            width: 100%;
+            z-index: 9999;
+            mix-blend-mode: difference;
+        }
+        #nav h3 {
+            color: #fff;
+            font-size: 22px;
+            font-weight: 300;
+        }
+        #nav h3 b { font-weight: 700; }
+        #nav button {
+            padding: 8px 20px;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            font-size: 12px;
+            transition: 0.3s;
+        }
+        #nav button:hover { background: rgba(255, 255, 255, 0.25); }
+
+        /* ===== PAGE 0 TEXT ===== */
+        #page h3 {
+            position: absolute;
+            bottom: 25%;
+            left: 5%;
+            z-index: 2;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 16px;
+            font-weight: 300;
+        }
+        #page h4 {
+            position: absolute;
+            bottom: 18%;
+            left: 5%;
+            z-index: 2;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        /* ===== PAGE 1 ===== */
+        #page1 #right-text {
+            position: absolute;
+            top: 30%;
+            left: 10%;
+            z-index: 20;
+        }
+        #page1 #right-text h3 {
+            font-weight: 400;
+            color: #7c7c7c;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+        #page1 #right-text h1 {
+            line-height: 1.2;
+            font-size: 50px;
+            color: #1a1a2e;
+        }
+        #page1 #left-text {
+            position: absolute;
+            top: 50%;
+            right: 10%;
+            text-align: end;
+            z-index: 20;
+        }
+        #page1 #left-text h1 {
+            font-size: 50px;
+            line-height: 1.2;
+            color: #1a1a2e;
+        }
+        #page1 #left-text h3 {
+            color: #7c7c7c;
+            font-weight: 400;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+
+        /* ===== PAGE 2 ===== */
+        #page2 #text1 {
+            position: absolute;
+            top: 30%;
+            left: 10%;
+            z-index: 20;
+        }
+        #page2 #text1 h3 {
+            color: #7c7c7c;
+            font-weight: 400;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+        #page2 #text1 h1 {
+            font-size: 60px;
+            line-height: 1.2;
+            color: #1a1a2e;
+        }
+        #page2 #text2 {
+            position: absolute;
+            top: 55%;
+            right: 10%;
+            text-align: end;
+            z-index: 20;
+        }
+        #page2 #text2 p {
+            color: #7c7c7c;
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        /* ===== PAGE 3 ===== */
+        #page3 #text3 {
+            position: absolute;
+            top: 40%;
+            right: 10%;
+            text-align: end;
+            z-index: 20;
+        }
+        #page3 #text3 h3 {
+            color: #7c7c7c;
+            font-weight: 400;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+        #page3 #text3 h1 {
+            font-size: 70px;
+            line-height: 1.2;
+            color: #1a1a2e;
+        }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 768px) {
+            #nav { padding: 15px 20px; }
+            #nav h3 { font-size: 16px; }
+            #nav button { font-size: 10px; padding: 6px 14px; }
+
+            #loop { top: 25%; }
+            #loop h1 { font-size: 35px; margin-right: 20px; }
+
+            #page h3 { bottom: 20%; font-size: 12px; left: 5%; width: 90%; }
+            #page h4 { bottom: 14%; font-size: 10px; left: 5%; }
+
+            #page1 #right-text { top: 20%; left: 5%; }
+            #page1 #right-text h1 { font-size: 28px; }
+            #page1 #left-text { top: auto; bottom: 15%; right: 5%; text-align: left; }
+            #page1 #left-text h1 { font-size: 24px; }
+            #page1 #left-text h3 { font-size: 10px; margin-top: 10px; }
+
+            #page2 #text1 { top: 20%; left: 5%; }
+            #page2 #text1 h1 { font-size: 32px; }
+            #page2 #text2 { top: auto; bottom: 15%; right: 5%; left: 5%; text-align: left; }
+            #page2 #text2 p { font-size: 12px; line-height: 1.6; }
+
+            #page3 #text3 { top: 35%; right: 5%; left: 5%; text-align: center; }
+            #page3 #text3 h1 { font-size: 32px; }
+
+            .contact-box { padding: 30px 25px; width: 95%; border-radius: 20px; }
+            .contact-box h1 { font-size: 2.2rem; }
+            .contact-box input, .contact-box textarea { padding: 13px 16px; font-size: 14px; border-radius: 12px; }
+            .contact-box textarea { height: 100px; }
+            .contact-box button { width: 100%; justify-content: center; padding: 14px 20px; font-size: 14px; }
+        }
+
+        @media (max-width: 480px) {
+            #loop h1 { font-size: 24px; margin-right: 15px; }
+            #page1 #right-text h1 { font-size: 22px; }
+            #page1 #left-text h1 { font-size: 18px; }
+            #page2 #text1 h1 { font-size: 24px; }
+            #page2 #text2 p { font-size: 11px; }
+            #page3 #text3 h1 { font-size: 24px; }
+            .contact-box { padding: 20px 16px; }
+            .contact-box h1 { font-size: 1.6rem; }
+            .contact-box input, .contact-box textarea { padding: 11px 14px; font-size: 13px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="nav">
+        <h3><b>RAJA</b>BISWAS*</h3>
+        <button>FULL STACK DEV</button>
+    </div>
+    <div id="main">
+        <!-- Page 0 - Hero -->
+        <div id="page">
+            <div id="loop">
+                <h1><b>RAJA</b>BISWAS IS THE <b><i>FULL</i></b> <span>STACK</span> IN THE <span><i>WEB WORLD.</i></span></h1>
+                <h1><b>RAJA</b>BISWAS IS THE <b><i>FULL</i></b> <span>STACK</span> IN THE <span><i>WEB WORLD.</i></span></h1>
+                <h1><b>RAJA</b>BISWAS IS THE <b><i>FULL</i></b> <span>STACK</span> IN THE <span><i>WEB WORLD.</i></span></h1>
+            </div>
+            <h3>BUILDING MODERN DIGITAL EXPERIENCES WITH CLEAN CODE AND CREATIVE DESIGN.</h3>
+            <h4>...SCROLL TO EXPLORE</h4>
+            <canvas></canvas>
+        </div>
+
+        <!-- Page 1 - About -->
+        <div id="page1">
+            <div id="right-text">
+                <h3>ABOUT / RAJA BISWAS</h3>
+                <h1>PASSIONATE<br>FULL STACK<br>WEB DEVELOPER</h1>
+            </div>
+            <div id="left-text">
+                <h1>FROM WEST BENGAL<br>INDIA<br>CREATING DIGITAL EXPERIENCES</h1>
+                <h3>..TRANSFORMING IDEAS INTO REALITY</h3>
+            </div>
+        </div>
+
+        <!-- Page 2 - Skills -->
+        <div id="page2">
+            <div id="text1">
+                <h3>SKILLS / TECHNOLOGIES</h3>
+                <h1>FRONTEND<br>BACKEND<br>FULL STACK</h1>
+            </div>
+            <div id="text2">
+                <p>HTML5 • CSS3 • JavaScript • React • Tailwind • Bootstrap • GSAP • Locomotive<br>
+                Node.js • Express • MongoDB • REST APIs • Firebase • Socket.io • Git & GitHub<br>
+                Responsive Design • UI/UX Development • JWT Authentication • Mongoose</p>
+            </div>
+        </div>
+
+        <!-- Page 3 - Projects -->
+        <div id="page3">
+            <div id="text3">
+                <h3>PROJECTS / SERVICES</h3>
+                <h1>E-COMMERCE<br>REAL-TIME CHAT<br>PORTFOLIO & BUSINESS</h1>
+            </div>
+        </div>
+
+        <!-- Contact -->
+        <div id="contact">
+            <canvas id="contact-canvas"></canvas>
+            <div class="contact-box">
+                <h1>Let's Work <br><span>Together</span></h1>
+                <form id="contact-form">
+                    <input type="text" id="user_name" placeholder="Your Name" required>
+                    <input type="email" id="user_email" placeholder="Your Email" required>
+                    <input type="text" id="subject" placeholder="Subject">
+                    <textarea id="message" placeholder="Your Message" rows="4" required></textarea>
+                    <button type="submit" id="submit-btn">
+                        Send Message <i class="fas fa-arrow-right"></i>
+                    </button>
+                </form>
+                <div id="form-message" class="form-message"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== EMAILJS CDN ===== -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+    <!-- ===== SCRIPTS ===== -->
+    <script src="https://cdn.jsdelivr.net/npm/locomotive-scroll@3.5.4/dist/locomotive-scroll.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/ScrollTrigger.min.js"></script>
+    <script>
+        // ============================================
+        // EMAILJS INITIALIZATION
+        // ============================================
+        (function() {
+            // 👇 আপনার EmailJS API Key দিন
+            emailjs.init("YOUR_PUBLIC_API_KEY"); // EmailJS থেকে API Key নিন
+        })();
+
+        // ============================================
+        // CONTACT FORM HANDLING
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('contact-form');
+            const submitBtn = document.getElementById('submit-btn');
+            const messageDiv = document.getElementById('form-message');
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                // বাটন ডিজেবল করুন
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = 'Sending... <i class="fas fa-spinner fa-spin"></i>';
+                messageDiv.className = 'form-message';
+                messageDiv.style.display = 'none';
+
+                // ফর্ম ডাটা সংগ্রহ করুন
+                const templateParams = {
+                    from_name: document.getElementById('user_name').value,
+                    from_email: document.getElementById('user_email').value,
+                    subject: document.getElementById('subject').value || 'No Subject',
+                    message: document.getElementById('message').value,
+                    to_name: 'Raja Biswas'
+                };
+
+                // 👇 আপনার EmailJS Template ID এবং Service ID দিন
+                emailjs.send(
+                    'YOUR_SERVICE_ID',      // EmailJS Service ID
+                    'YOUR_TEMPLATE_ID',     // EmailJS Template ID
+                    templateParams
+                )
+                .then(function(response) {
+                    console.log('SUCCESS!', response.status, response.text);
+                    messageDiv.className = 'form-message success';
+                    messageDiv.style.display = 'block';
+                    messageDiv.textContent = '✅ Message sent successfully! I\'ll get back to you soon.';
+                    form.reset();
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Send Message <i class="fas fa-arrow-right"></i>';
+                })
+                .catch(function(error) {
+                    console.error('FAILED...', error);
+                    messageDiv.className = 'form-message error';
+                    messageDiv.style.display = 'block';
+                    messageDiv.textContent = '❌ Failed to send message. Please try again later.';
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Send Message <i class="fas fa-arrow-right"></i>';
+                });
+            });
+        });
+
+        // ============================================
+        // DETECT MOBILE
+        // ============================================
+        const isMobile = window.innerWidth < 768;
+
+        // ============================================
+        // LOCOMOTIVE SCROLL
+        // ============================================
+        function locomotive() {
+            gsap.registerPlugin(ScrollTrigger);
+
+            const locoScroll = new LocomotiveScroll({
+                el: document.querySelector("#main"),
+                smooth: true,
+                smartphone: { smooth: true },
+                tablet: { smooth: true }
+            });
+
+            locoScroll.on("scroll", ScrollTrigger.update);
+            locoScroll.on("scroll", () => {
+                renderAll();
+            });
+
+            ScrollTrigger.scrollerProxy("#main", {
+                scrollTop(value) {
+                    return arguments.length ?
+                        locoScroll.scrollTo(value, 0, 0) :
+                        locoScroll.scroll.instance.scroll.y;
+                },
+                getBoundingClientRect() {
+                    return {
+                        top: 0,
+                        left: 0,
+                        width: window.innerWidth,
+                        height: window.innerHeight,
+                    };
+                },
+                pinType: document.querySelector("#main").style.transform ?
+                    "transform" :
+                    "fixed",
+            });
+
+            ScrollTrigger.addEventListener("refresh", () => locoScroll.update());
+            ScrollTrigger.refresh();
+
+            return locoScroll;
+        }
+        const locoScrollInstance = locomotive();
+
+        // ============================================
+        // CANVAS SETUP
+        // ============================================
+        const canvas = document.querySelector("#page canvas");
+        const context = canvas.getContext("2d");
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+
+        window.addEventListener("resize", () => {
+            resizeCanvas();
+            renderAll();
+            if (typeof locoScrollInstance?.update === "function") {
+                locoScrollInstance.update();
+            }
+            ScrollTrigger.refresh();
+        });
+
+        // ============================================
+        // IMAGES LOADING WITH MOBILE FIX
+        // ============================================
+        function files(index) {
+            var data = `
+         ./male0001.png
+         ./male0002.png
+         ./male0003.png
+         ./male0004.png
+         ./male0005.png
+         ./male0006.png
+         ./male0007.png
+         ./male0008.png
+         ./male0009.png
+         ./male0010.png
+         ./male0011.png
+         ./male0012.png
+         ./male0013.png
+         ./male0014.png
+         ./male0015.png
+         ./male0016.png
+         ./male0017.png
+         ./male0018.png
+         ./male0019.png
+         ./male0020.png
+         ./male0021.png
+         ./male0022.png
+         ./male0023.png
+         ./male0024.png
+         ./male0025.png
+         ./male0026.png
+         ./male0027.png
+         ./male0028.png
+         ./male0029.png
+         ./male0030.png
+         ./male0031.png
+         ./male0032.png
+         ./male0033.png
+         ./male0034.png
+         ./male0035.png
+         ./male0036.png
+         ./male0037.png
+         ./male0038.png
+         ./male0039.png
+         ./male0040.png
+         ./male0041.png
+         ./male0042.png
+         ./male0043.png
+         ./male0044.png
+         ./male0045.png
+         ./male0046.png
+         ./male0047.png
+         ./male0048.png
+         ./male0049.png
+         ./male0050.png
+         ./male0051.png
+         ./male0052.png
+         ./male0053.png
+         ./male0054.png
+         ./male0055.png
+         ./male0056.png
+         ./male0057.png
+         ./male0058.png
+         ./male0059.png
+         ./male0060.png
+         ./male0061.png
+         ./male0062.png
+         ./male0063.png
+         ./male0064.png
+         ./male0065.png
+         ./male0066.png
+         ./male0067.png
+         ./male0068.png
+         ./male0069.png
+         ./male0070.png
+         ./male0071.png
+         ./male0072.png
+         ./male0073.png
+         ./male0074.png
+         ./male0075.png
+         ./male0076.png
+         ./male0077.png
+         ./male0078.png
+         ./male0079.png
+         ./male0080.png
+         ./male0081.png
+         ./male0082.png
+         ./male0083.png
+         ./male0084.png
+         ./male0085.png
+         ./male0086.png
+         ./male0087.png
+         ./male0088.png
+         ./male0089.png
+         ./male0090.png
+         ./male0091.png
+         ./male0092.png
+         ./male0093.png
+         ./male0094.png
+         ./male0095.png
+         ./male0096.png
+         ./male0097.png
+         ./male0098.png
+         ./male0099.png
+         ./male0100.png
+         ./male0101.png
+         ./male0102.png
+         ./male0103.png
+         ./male0104.png
+         ./male0105.png
+         ./male0106.png
+         ./male0107.png
+         ./male0108.png
+         ./male0109.png
+         ./male0110.png
+         ./male0111.png
+         ./male0112.png
+         ./male0113.png
+         ./male0114.png
+         ./male0115.png
+         ./male0116.png
+         ./male0117.png
+         ./male0118.png
+         ./male0119.png
+         ./male0120.png
+         ./male0121.png
+         ./male0122.png
+         ./male0123.png
+         ./male0124.png
+         ./male0125.png
+         ./male0126.png
+         ./male0127.png
+         ./male0128.png
+         ./male0129.png
+         ./male0130.png
+         ./male0131.png
+         ./male0132.png
+         ./male0133.png
+         ./male0134.png
+         ./male0135.png
+         ./male0136.png
+         ./male0137.png
+         ./male0138.png
+         ./male0139.png
+         ./male0140.png
+         ./male0141.png
+         ./male0142.png
+         ./male0143.png
+         ./male0144.png
+         ./male0145.png
+         ./male0146.png
+         ./male0147.png
+         ./male0148.png
+         ./male0149.png
+         ./male0150.png
+         ./male0151.png
+         ./male0152.png
+         ./male0153.png
+         ./male0154.png
+         ./male0155.png
+         ./male0156.png
+         ./male0157.png
+         ./male0158.png
+         ./male0159.png
+         ./male0160.png
+         ./male0161.png
+         ./male0162.png
+         ./male0163.png
+         ./male0164.png
+         ./male0165.png
+         ./male0166.png
+         ./male0167.png
+         ./male0168.png
+         ./male0169.png
+         ./male0170.png
+         ./male0171.png
+         ./male0172.png
+         ./male0173.png
+         ./male0174.png
+         ./male0175.png
+         ./male0176.png
+         ./male0177.png
+         ./male0178.png
+         ./male0179.png
+         ./male0180.png
+         ./male0181.png
+         ./male0182.png
+         ./male0183.png
+         ./male0184.png
+         ./male0185.png
+         ./male0186.png
+         ./male0187.png
+         ./male0188.png
+         ./male0189.png
+         ./male0190.png
+         ./male0191.png
+         ./male0192.png
+         ./male0193.png
+         ./male0194.png
+         ./male0195.png
+         ./male0196.png
+         ./male0197.png
+         ./male0198.png
+         ./male0199.png
+         ./male0200.png
+         ./male0201.png
+         ./male0202.png
+         ./male0203.png
+         ./male0204.png
+         ./male0205.png
+         ./male0206.png
+         ./male0207.png
+         ./male0208.png
+         ./male0209.png
+         ./male0210.png
+         ./male0211.png
+         ./male0212.png
+         ./male0213.png
+         ./male0214.png
+         ./male0215.png
+         ./male0216.png
+         ./male0217.png
+         ./male0218.png
+         ./male0219.png
+         ./male0220.png
+         ./male0221.png
+         ./male0222.png
+         ./male0223.png
+         ./male0224.png
+         ./male0225.png
+         ./male0226.png
+         ./male0227.png
+         ./male0228.png
+         ./male0229.png
+         ./male0230.png
+         ./male0231.png
+         ./male0232.png
+         ./male0233.png
+         ./male0234.png
+         ./male0235.png
+         ./male0236.png
+         ./male0237.png
+         ./male0238.png
+         ./male0239.png
+         ./male0240.png
+         ./male0241.png
+         ./male0242.png
+         ./male0243.png
+         ./male0244.png
+         ./male0245.png
+         ./male0246.png
+         ./male0247.png
+         ./male0248.png
+         ./male0249.png
+         ./male0250.png
+         ./male0251.png
+         ./male0252.png
+         ./male0253.png
+         ./male0254.png
+         ./male0255.png
+         ./male0256.png
+         ./male0257.png
+         ./male0258.png
+         ./male0259.png
+         ./male0260.png
+         ./male0261.png
+         ./male0262.png
+         ./male0263.png
+         ./male0264.png
+         ./male0265.png
+         ./male0266.png
+         ./male0267.png
+         ./male0268.png
+         ./male0269.png
+         ./male0270.png
+         ./male0271.png
+         ./male0272.png
+         ./male0273.png
+         ./male0274.png
+         ./male0275.png
+         ./male0276.png
+         ./male0277.png
+         ./male0278.png
+         ./male0279.png
+         ./male0280.png
+         ./male0281.png
+         ./male0282.png
+         ./male0283.png
+         ./male0284.png
+         ./male0285.png
+         ./male0286.png
+         ./male0287.png
+         ./male0288.png
+         ./male0289.png
+         ./male0290.png
+         ./male0291.png
+         ./male0292.png
+         ./male0293.png
+         ./male0294.png
+         ./male0295.png
+         ./male0296.png
+         ./male0297.png
+         ./male0298.png
+         ./male0299.png
+         ./male0300.png
+      `;
+            return data.split("\n")[index].trim();
+        }
+
+        const frameCount = 300;
+        const images = [];
+        const imageSeq = { frame: 1 };
+        let imagesLoaded = 0;
+        let loadErrors = 0;
+
+        // ============================================
+        // LOAD IMAGES WITH MOBILE RETRY
+        // ============================================
+        for (let i = 0; i < frameCount; i++) {
+            const img = new Image();
+            
+            const timeoutDuration = isMobile ? 3000 : 500;
+            let loadTimeout = setTimeout(() => {
+                if (!img.complete) {
+                    console.log(`⚠️ Image ${i} taking too long on ${isMobile ? 'mobile' : 'desktop'}, retrying...`);
+                    img.src = files(i) + '?v=' + Date.now();
+                }
+            }, timeoutDuration);
+            
+            img.onload = function() {
+                clearTimeout(loadTimeout);
+                imagesLoaded++;
+                console.log(`✅ ${imagesLoaded}/${frameCount}: ${files(i)}`);
+                if (imagesLoaded === frameCount) {
+                    console.log('🎉 All images loaded successfully!');
+                    renderAll();
+                }
+            };
+            
+            img.onerror = function() {
+                clearTimeout(loadTimeout);
+                loadErrors++;
+                console.error(`❌ Failed: ${files(i)}`);
+                imagesLoaded++;
+                
+                if (isMobile && loadErrors < 30) {
+                    console.log(`🔄 Retrying image ${i} (attempt ${loadErrors})...`);
+                    setTimeout(() => {
+                        const retryImg = new Image();
+                        retryImg.onload = function() {
+                            images[i] = retryImg;
+                            imagesLoaded++;
+                            console.log(`✅ Retry success: ${files(i)}`);
+                            if (imagesLoaded === frameCount) renderAll();
+                        };
+                        retryImg.onerror = function() {
+                            console.log(`❌ Retry failed: ${files(i)}`);
+                            imagesLoaded++;
+                            if (imagesLoaded === frameCount) renderAll();
+                        };
+                        retryImg.src = files(i) + '?v=' + Date.now();
+                        images[i] = retryImg;
+                    }, 1000);
+                } else {
+                    if (imagesLoaded === frameCount) {
+                        console.log(`⚠️ ${loadErrors} images failed, but continuing...`);
+                        renderAll();
+                    }
+                }
+            };
+            
+            img.src = files(i);
+            images.push(img);
+        }
+
+        // ============================================
+        // RENDER ALL
+        // ============================================
+        function renderAll() {
+            if (images[imageSeq.frame] && images[imageSeq.frame].complete) {
+                scaleImage(images[imageSeq.frame], context);
+                if (typeof window.renderContact === 'function') {
+                    window.renderContact();
+                }
+            } else if (isMobile) {
+                setTimeout(renderAll, 200);
+            }
+        }
+
+        // ============================================
+        // GSAP ANIMATION
+        // ============================================
+        gsap.to(imageSeq, {
+            frame: frameCount - 1,
+            snap: "frame",
+            ease: "none",
+            scrollTrigger: {
+                scrub: 0.5,
+                trigger: "#page>canvas",
+                start: "top top",
+                end: "900% top",
+                scroller: "#main",
+                invalidateOnRefresh: true,
+            },
+            onUpdate: renderAll,
+        });
+
+        function scaleImage(img, ctx) {
+            const canvas = ctx.canvas;
+            const hRatio = canvas.width / img.width;
+            const vRatio = canvas.height / img.height;
+            const ratio = Math.max(hRatio, vRatio);
+            const centerShift_x = (canvas.width - img.width * ratio) / 2;
+            const centerShift_y = (canvas.height - img.height * ratio) / 2;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(
+                img, 0, 0, img.width, img.height,
+                centerShift_x, centerShift_y,
+                img.width * ratio, img.height * ratio
+            );
+        }
+
+        // ============================================
+        // CONTACT CANVAS
+        // ============================================
+        const contactCanvas = document.getElementById("contact-canvas");
+        const contactCtx = contactCanvas?.getContext("2d");
+
+        if (contactCanvas && contactCtx) {
+            function resizeContactCanvas() {
+                contactCanvas.width = window.innerWidth;
+                contactCanvas.height = window.innerHeight;
+            }
+            resizeContactCanvas();
+
+            window.renderContact = function () {
+                if (images[imageSeq.frame] && images[imageSeq.frame].complete) {
+                    const img = images[imageSeq.frame];
+                    const hRatio = contactCanvas.width / img.width;
+                    const vRatio = contactCanvas.height / img.height;
+                    const ratio = Math.max(hRatio, vRatio);
+                    const cx = (contactCanvas.width - img.width * ratio) / 2;
+                    const cy = (contactCanvas.height - img.height * ratio) / 2;
+                    contactCtx.clearRect(0, 0, contactCanvas.width, contactCanvas.height);
+                    contactCtx.drawImage(img, 0, 0, img.width, img.height, cx, cy, img.width * ratio, img.height * ratio);
+                }
+            };
+
+            window.addEventListener("resize", () => {
+                resizeContactCanvas();
+                if (typeof window.renderContact === 'function') window.renderContact();
+            });
+
+            setTimeout(() => {
+                if (typeof window.renderContact === 'function') window.renderContact();
+            }, 200);
+        }
+
+        // ============================================
+        // PINNING
+        // ============================================
+        ScrollTrigger.create({
+            trigger: "#page>canvas",
+            pin: true,
+            pinSpacing: true,
+            scroller: "#main",
+            start: "top top",
+            end: "900% top",
+            invalidateOnRefresh: true,
+        });
+
+        gsap.to("#page1", {
+            scrollTrigger: {
+                trigger: "#page1",
+                start: "top top",
+                end: "bottom top",
+                pin: true,
+                pinSpacing: true,
+                scroller: "#main",
+                invalidateOnRefresh: true,
+            },
+        });
+
+        gsap.to("#page2", {
+            scrollTrigger: {
+                trigger: "#page2",
+                start: "top top",
+                end: "bottom top",
+                pin: true,
+                pinSpacing: true,
+                scroller: "#main",
+                invalidateOnRefresh: true,
+            },
+        });
+
+        gsap.to("#page3", {
+            scrollTrigger: {
+                trigger: "#page3",
+                start: "top top",
+                end: "bottom top",
+                pin: true,
+                pinSpacing: true,
+                scroller: "#main",
+                invalidateOnRefresh: true,
+            },
+        });
+
+        gsap.to("#contact", {
+            scrollTrigger: {
+                trigger: "#contact",
+                start: "top top",
+                end: "bottom top",
+                pin: true,
+                pinSpacing: true,
+                scroller: "#main",
+                invalidateOnRefresh: true,
+            },
+        });
+
+        // ============================================
+        // CANVAS OPACITY CONTROL
+        // ============================================
+        ScrollTrigger.create({
+            trigger: "#contact",
+            start: "top top",
+            end: "bottom top",
+            scroller: "#main",
+            onEnter: () => {
+                canvas.style.opacity = "0";
+            },
+            onLeave: () => {
+                canvas.style.opacity = "1";
+            },
+            onEnterBack: () => {
+                canvas.style.opacity = "0";
+            },
+            onLeaveBack: () => {
+                canvas.style.opacity = "1";
+            },
+        });
+
+        // ============================================
+        // MOBILE FIX
+        // ============================================
+        if (isMobile) {
+            console.log('📱 Mobile mode - Animation fix enabled');
+            
+            locoScrollInstance.on("scroll", () => {
+                renderAll();
+            });
+
+            document.addEventListener("touchmove", () => {
+                renderAll();
+            }, { passive: true });
+
+            window.addEventListener("scroll", () => {
+                renderAll();
+            }, { passive: true });
+
+            setInterval(() => {
+                renderAll();
+            }, 50);
+        }
+
+        // ============================================
+        // LOCOMOTIVE SCROLL -> renderAll
+        // ============================================
+        locoScrollInstance.on("scroll", () => {
+            renderAll();
+        });
+
+        // ============================================
+        // FINAL REFRESH
+        // ============================================
+        ScrollTrigger.refresh();
+
+        console.log('🚀 Website loaded successfully!');
+        console.log('📱 Device:', isMobile ? 'Mobile' : 'Desktop');
+    </script>
+</body>
+</html>
